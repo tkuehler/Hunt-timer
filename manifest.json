@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Hunter's Countdown",
+  "version": "1.0.0",
+  "description": "A beautiful new tab experience for hunters with hunting season countdowns and geolocation-based Texas county regulations from TPWD.",
+  "permissions": ["storage"],
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "author": "TravKue",
+  "offline_enabled": true,
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "*.js", "*.css", "images/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

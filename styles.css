@@ -1,0 +1,590 @@
+/* Minimalist Hunter's Countdown with Glassmorphism */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-image 1s ease;
+  margin: 0;
+  padding: 0;
+}
+
+.backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Darker overlay for better readability */
+  z-index: -1;
+}
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 30px;
+}
+
+/* Glass effect */
+.time,
+.countdown,
+.search-container,
+.settings-button,
+.custom-season-modal,
+.location-modal,
+.privacy-modal,
+.login-modal {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Time section */
+.time {
+  padding: 20px 40px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#clock {
+  font-size: 5rem;
+  font-weight: 200;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+#date {
+  font-size: 1.2rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+/* Search bar */
+.search-container {
+  width: 60%;
+  padding: 10px 20px;
+  margin-bottom: 30px;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 15px;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.search-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+/* Greeting section */
+.greeting {
+  font-size: 2.5rem;
+  font-weight: 200;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 30px;
+}
+
+/* Countdown section */
+.countdown-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  width: 100%;
+  justify-content: center;
+}
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.countdown:hover {
+  transform: translateY(-5px);
+}
+
+.countdown .days {
+  font-size: 3.5rem;
+  font-weight: 200;
+  margin-bottom: 10px;
+}
+
+.countdown .label {
+  font-size: 1rem;
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+/* Settings button */
+.settings-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.settings-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom season module */
+.custom-season-modal,
+.location-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 25px;
+  width: 400px;
+  z-index: 10;
+  display: none;
+}
+
+.custom-season-modal.active,
+.location-modal.active {
+  display: block;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.season-form,
+.location-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.form-group select option {
+  background-color: #2c3e2e;
+}
+
+.add-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 8px 0;
+  border-radius: 8px;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.add-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  display: none;
+}
+
+.modal-overlay.active {
+  display: block;
+}
+
+/* Footer */
+.footer {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  text-align: center;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 1px;
+  transition: border-color 0.3s ease;
+}
+
+.footer a:hover {
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.location {
+  font-style: italic;
+}
+
+/* Add styles for the privacy button and modal */
+.privacy-button {
+  background: none;
+  border: none;
+  color: #fff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 5px;
+}
+
+.privacy-button:hover {
+  opacity: 1;
+}
+
+.privacy-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 25px;
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+}
+
+.privacy-content {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.privacy-heading {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.privacy-date {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 15px;
+}
+
+.privacy-subheading {
+  font-size: 1.1rem;
+  font-weight: 300;
+  margin: 15px 0 5px;
+}
+
+.privacy-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 5px 0 15px;
+}
+
+/* Search styles */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.search-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.search-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Error message styles */
+.error-message {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+.error-message h2 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+.error-message p {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Login modal styles */
+.login-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 25px;
+  width: 400px;
+  z-index: 10;
+  display: none;
+}
+
+.login-note {
+  text-align: center;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 15px;
+}
+
+/* Accessibility improvements */
+button:focus,
+input:focus,
+select:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .countdown-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .countdown {
+    width: 90%;
+    height: 120px;
+    padding: 15px;
+  }
+
+  #clock {
+    font-size: 3.5rem;
+  }
+
+  .greeting {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .search-container {
+    width: 90%;
+  }
+
+  .custom-season-modal,
+  .location-modal {
+    width: 90%;
+  }
+}
+
+/* Remove season button */
+.remove-season {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.countdown {
+  position: relative;
+}
+
+.countdown:hover .remove-season {
+  opacity: 1;
+}
+
+.remove-season:hover {
+  background: rgba(255, 100, 100, 0.5);
+}
+
+/* Add tile styles */
+.add-tile {
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.add-tile:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.add-tile .days {
+  font-size: 3rem;
+  opacity: 0.7;
+}
+
+/* County group styling */
+#county-group {
+  margin-top: 15px;
+}
+
+#detect-location-btn {
+  width: 100%;
+  background: rgba(100, 180, 100, 0.3);
+}
+
+#detect-location-btn:hover {
+  background: rgba(100, 180, 100, 0.5);
+}
+
+#detect-location-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Active season indicator */
+.countdown.active-season {
+  border: 2px solid rgba(100, 255, 100, 0.5);
+  box-shadow: 0 0 20px rgba(100, 255, 100, 0.2);
+}
+
+/* Responsive improvements */
+@media (max-width: 480px) {
+  #clock {
+    font-size: 2.5rem;
+  }
+
+  .greeting {
+    font-size: 1.5rem;
+  }
+
+  .countdown {
+    width: 100%;
+    height: 100px;
+  }
+}

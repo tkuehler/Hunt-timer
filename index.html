@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A beautiful new tab experience for hunters with hunting season countdowns">
+  <title>Hunter's Countdown - New Tab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="backdrop"></div>
+  
+  <div class="container">
+    <div class="time">
+      <div id="clock" aria-live="polite">--:--</div>
+      <div id="date" aria-live="polite">Loading...</div>
+    </div>
+    
+    <div class="search-container">
+      <div class="search-wrapper">
+        <button id="search-toggle" class="search-toggle" aria-label="Toggle search">🔍</button>
+        <form id="search-form" class="search-form" style="display: none;">
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        </form>
+      </div>
+    </div>
+    
+    <div class="greeting" id="greeting" aria-live="polite">Welcome, hunter</div>
+    
+    <div class="countdown-container" id="countdown-container" aria-label="Hunting season countdowns">
+      <!-- Countdown tiles will be dynamically inserted here -->
+    </div>
+    
+    <div class="footer">
+      <span>Check your local wildlife agency for specific regulations</span>
+      <div class="location" id="location">Location: <span id="location-text">Loading...</span></div>
+      <button id="privacy-button" class="privacy-button">Privacy Policy</button>
+    </div>
+  </div>
+  
+  <div class="settings-button" id="settings-button" aria-label="Settings">⚙️</div>
+  
+  <div class="modal-overlay" id="modal-overlay"></div>
+  
+  <div class="custom-season-modal" id="custom-season-modal" aria-labelledby="custom-season-title">
+    <div class="modal-header">
+      <h3 class="modal-title" id="custom-season-title">Add Custom Season</h3>
+      <button class="close-button" id="close-modal" aria-label="Close modal">✕</button>
+    </div>
+    <form class="season-form" id="season-form">
+      <div class="form-group">
+        <label for="season-type">Season Type</label>
+        <select id="season-type" required>
+          <option value="">Select Game Animal</option>
+          <!-- Options will be populated dynamically based on location -->
+          <option value="whitetail_deer">Whitetail Deer</option>
+          <option value="mule_deer">Mule Deer</option>
+          <option value="dove">Dove</option>
+          <option value="turkey_spring">Spring Turkey</option>
+          <option value="turkey_fall">Fall Turkey</option>
+          <option value="duck">Duck</option>
+          <option value="goose">Goose</option>
+          <option value="quail">Quail</option>
+          <option value="pheasant">Pheasant</option>
+          <option value="elk">Elk</option>
+          <option value="javelina">Javelina</option>
+          <option value="hog">Feral Hog</option>
+          <option value="squirrel">Squirrel</option>
+          <option value="rabbit">Rabbit</option>
+          <option value="custom">Custom...</option>
+        </select>
+      </div>
+      <div class="form-group" id="custom-name-group" style="display: none;">
+        <label for="custom-name">Custom Name</label>
+        <input type="text" id="custom-name" placeholder="e.g., Mule Deer">
+      </div>
+      <div class="form-group">
+        <label for="season-date">Season Start Date</label>
+        <input type="date" id="season-date" required>
+      </div>
+      <button type="submit" class="add-button">Add Season</button>
+    </form>
+  </div>
+
+  <div class="location-modal" id="location-modal" aria-labelledby="location-title">
+    <div class="modal-header">
+      <h3 class="modal-title" id="location-title">Set Your Location</h3>
+      <button class="close-button" id="close-location-modal" aria-label="Close modal">✕</button>
+    </div>
+    <form class="location-form" id="location-form">
+      <div class="form-group">
+        <label for="state-select">Select Your State</label>
+        <select id="state-select" required>
+          <option value="">Select State</option>
+          <!-- States will be populated by JavaScript -->
+        </select>
+      </div>
+      <button type="submit" class="add-button">Save Location</button>
+    </form>
+  </div>
+  
+  <div class="login-modal" id="login-modal" aria-labelledby="login-title">
+    <div class="modal-header">
+      <h3 class="modal-title" id="login-title">Login</h3>
+      <button class="close-button" id="close-login-modal" aria-label="Close modal">✕</button>
+    </div>
+    <form class="login-form" id="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="add-button">Login</button>
+      <p class="login-note">For demo purposes, any email/password will work</p>
+    </form>
+  </div>
+  
+  <div class="privacy-modal" id="privacy-modal" aria-labelledby="privacy-title">
+    <div class="modal-header">
+      <h3 class="modal-title" id="privacy-title">Privacy Policy</h3>
+      <button class="close-button" id="close-privacy-modal" aria-label="Close modal">✕</button>
+    </div>
+    <div class="privacy-content">
+      <!-- Privacy policy content will be inserted here -->
+    </div>
+  </div>
+  
+  <script src="seasons-data.js"></script>
+  <script src="background-images.js"></script>
+  <!-- Load Texas counties data for geolocation feature -->
+  <script src="texas-counties-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
