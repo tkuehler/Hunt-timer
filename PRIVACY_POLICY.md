@@ -1,10 +1,10 @@
-# Privacy Policy for Hunter's Countdown
+# Privacy Policy for Hunt Clock
 
-**Last Updated: May 5, 2026**
+**Last Updated: June 19, 2026**
 
 ## Overview
 
-Hunter's Countdown ("the Extension") is a Chrome extension that provides hunting season countdown timers and information. This privacy policy explains how we collect, use, and protect your information.
+Hunt Clock ("the Extension") is a Chrome extension that provides hunting season countdown timers and information. This privacy policy explains how we collect, use, and protect your information.
 
 ## Information We Collect
 
@@ -70,8 +70,8 @@ We may update this privacy policy from time to time. Changes will be reflected i
 
 ## Contact
 
-For questions about this privacy policy, please contact: [Your Email Address]
+For questions about this privacy policy, please contact: travisk90@gmail.com
 
 ## Consent
 
-By using Hunter's Countdown, you consent to this privacy policy.
+By using Hunt Clock, you consent to this privacy policy.

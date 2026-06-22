@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Hunter's Countdown",
+  "name": "Hunt Clock",
   "version": "1.0.0",
-  "description": "A beautiful new tab experience for hunters with hunting season countdowns and geolocation-based Texas county regulations from TPWD.",
-  "permissions": ["storage"],
+  "description": "A beautiful new tab for hunters with hunting season countdowns and geolocation-based Texas county regulations from TPWD.",
+  "permissions": ["geolocation"],
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
@@ -15,12 +15,6 @@
   "author": "TravKue",
   "offline_enabled": true,
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["icons/*", "*.js", "*.css", "images/*"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://nominatim.openstreetmap.org; img-src 'self' data:"
+  }
 }

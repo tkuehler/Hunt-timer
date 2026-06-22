@@ -1,4 +1,4 @@
-// Background images for Hunter's Countdown
+// Background images for Hunt Clock
 // These images should be placed in the images/ folder of the extension
 const backgroundImages = [
   {

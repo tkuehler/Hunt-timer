@@ -1,7 +1,7 @@
 # Chrome Web Store Listing Information
 
 ## Extension Name
-Hunter's Countdown
+Hunt Clock
 
 ## Short Description (132 characters max)
 A beautiful new tab with hunting season countdowns. Auto-detect your Texas county for TPWD-accurate season dates.

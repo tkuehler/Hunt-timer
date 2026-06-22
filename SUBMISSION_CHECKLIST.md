@@ -76,7 +76,7 @@ DO NOT include: store-assets/, *.md files, app/ folder, public/ folder, lib/ fol
 2. Click "New Item"
 3. Upload your extension ZIP
 4. Fill in store listing:
-   - **Name:** Hunter's Countdown
+   - **Name:** Hunt Clock
    - **Summary:** (use content from STORE_LISTING.md)
    - **Description:** (use content from STORE_LISTING.md)
    - **Category:** Productivity
@@ -102,7 +102,7 @@ Beautiful new tab with hunting season countdowns. Texas county-specific dates fr
 
 ### Detailed Description:
 ```
-Hunter's Countdown transforms your new tab into a beautiful hunting companion that keeps you informed about upcoming seasons.
+Hunt Clock transforms your new tab into a beautiful hunting companion that keeps you informed about upcoming seasons.
 
 FEATURES:
 • Real-time countdown to hunting seasons

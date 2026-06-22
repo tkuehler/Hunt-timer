@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A beautiful new tab experience for hunters with hunting season countdowns">
-  <title>Hunter's Countdown - New Tab</title>
+  <title>Hunt Clock - New Tab</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet">
@@ -98,26 +98,11 @@
           <!-- States will be populated by JavaScript -->
         </select>
       </div>
+      <div class="form-group">
+        <label for="hunter-name">Your Name (optional)</label>
+        <input type="text" id="hunter-name" placeholder="e.g., Travis" maxlength="40">
+      </div>
       <button type="submit" class="add-button">Save Location</button>
-    </form>
-  </div>
-  
-  <div class="login-modal" id="login-modal" aria-labelledby="login-title">
-    <div class="modal-header">
-      <h3 class="modal-title" id="login-title">Login</h3>
-      <button class="close-button" id="close-login-modal" aria-label="Close modal">✕</button>
-    </div>
-    <form class="login-form" id="login-form">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" required placeholder="your@email.com">
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" required placeholder="••••••••">
-      </div>
-      <button type="submit" class="add-button">Login</button>
-      <p class="login-note">For demo purposes, any email/password will work</p>
     </form>
   </div>
   

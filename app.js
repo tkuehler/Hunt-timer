@@ -1,4 +1,4 @@
-// Hunter's Countdown - Chrome Extension
+// Hunt Clock - Chrome Extension
 // Main Application JavaScript
 
 // ============================================
@@ -361,8 +361,9 @@ function updateCountdowns() {
   
   let defaultSeasons = [];
   
-  // Check for Texas county-specific seasons
-  if (savedState === 'TX' && savedCounty && window.texasCountySeasons) {
+  // Check for Texas county-specific seasons (fall through to general TX
+  // seasons below for counties that don't yet have county-specific data)
+  if (savedState === 'TX' && savedCounty && window.texasCountySeasons && window.texasCountySeasons[savedCounty]) {
     const countySeasons = window.texasCountySeasons[savedCounty];
     if (countySeasons) {
       // Auto-add deer, dove, and turkey for Texas counties
@@ -638,10 +639,17 @@ function addCustomSeason(e) {
 function openLocationModal() {
   const modal = document.getElementById('location-modal');
   const overlay = document.getElementById('modal-overlay');
-  
+
   if (modal) modal.classList.add('active');
   if (overlay) overlay.classList.add('active');
-  
+
+  // Prefill the optional name field with any saved name
+  const nameInput = document.getElementById('hunter-name');
+  if (nameInput) {
+    const savedName = localStorage.getItem('hunterName');
+    nameInput.value = savedName && savedName !== 'hunter' ? savedName : '';
+  }
+
   populateTexasCountyDropdown();
 }
 
@@ -661,50 +669,28 @@ function saveLocation(e) {
   
   if (stateSelect && stateSelect.value) {
     localStorage.setItem('selectedState', stateSelect.value);
-    
+
     if (stateSelect.value === 'TX' && countySelect && countySelect.value) {
       localStorage.setItem('selectedCounty', countySelect.value);
     } else {
       localStorage.removeItem('selectedCounty');
     }
-    
+
+    // Save optional display name
+    const nameInput = document.getElementById('hunter-name');
+    if (nameInput) {
+      const name = nameInput.value.trim();
+      if (name) {
+        localStorage.setItem('hunterName', name);
+      } else {
+        localStorage.removeItem('hunterName');
+      }
+      showTime(); // refresh greeting
+    }
+
     updateLocationDisplay();
     updateCountdowns();
     closeLocationModal();
-  }
-}
-
-// ============================================
-// LOGIN MODAL
-// ============================================
-
-function openLoginModal() {
-  const modal = document.getElementById('login-modal');
-  const overlay = document.getElementById('modal-overlay');
-  
-  if (modal) modal.classList.add('active');
-  if (overlay) overlay.classList.add('active');
-}
-
-function closeLoginModal() {
-  const modal = document.getElementById('login-modal');
-  const overlay = document.getElementById('modal-overlay');
-  
-  if (modal) modal.classList.remove('active');
-  if (overlay) overlay.classList.remove('active');
-}
-
-function handleLogin(e) {
-  e.preventDefault();
-  
-  const email = document.getElementById('email');
-  if (email && email.value) {
-    const userName = email.value.split('@')[0];
-    localStorage.setItem('hunterName', userName);
-    localStorage.setItem('isLoggedIn', 'true');
-    
-    showTime(); // Update greeting
-    closeLoginModal();
   }
 }
 
@@ -723,7 +709,7 @@ function openPrivacyModal() {
       <p class="privacy-date">Last updated: ${new Date().toLocaleDateString()}</p>
       
       <h3 class="privacy-subheading">Information We Collect</h3>
-      <p>Hunter's Countdown collects and stores the following information locally on your device:</p>
+      <p>Hunt Clock collects and stores the following information locally on your device:</p>
       <ul>
         <li>Your selected state and county (for displaying relevant hunting seasons)</li>
         <li>Custom hunting seasons you create</li>
@@ -743,7 +729,7 @@ function openPrivacyModal() {
       <p>All your data remains on your device and is not accessible to us or any third parties.</p>
       
       <h3 class="privacy-subheading">Contact</h3>
-      <p>If you have questions about this privacy policy, please contact us through the Chrome Web Store.</p>
+      <p>If you have questions about this privacy policy, please contact us at travisk90@gmail.com.</p>
     `;
   }
   
@@ -863,18 +849,6 @@ function setupEventListeners() {
     closeModalBtn.onclick = closeCustomSeasonModal;
   }
   
-  // Login form
-  const loginForm = document.getElementById('login-form');
-  if (loginForm) {
-    loginForm.onsubmit = handleLogin;
-  }
-  
-  // Close login modal
-  const closeLoginBtn = document.getElementById('close-login-modal');
-  if (closeLoginBtn) {
-    closeLoginBtn.onclick = closeLoginModal;
-  }
-  
   // Privacy button and modal
   const privacyBtn = document.getElementById('privacy-button');
   if (privacyBtn) {
@@ -904,7 +878,6 @@ function setupEventListeners() {
     overlay.onclick = () => {
       closeCustomSeasonModal();
       closeLocationModal();
-      closeLoginModal();
       closePrivacyModal();
     };
   }
@@ -914,7 +887,6 @@ function setupEventListeners() {
     if (e.key === 'Escape') {
       closeCustomSeasonModal();
       closeLocationModal();
-      closeLoginModal();
       closePrivacyModal();
     }
   });
