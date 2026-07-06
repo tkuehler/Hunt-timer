@@ -24,6 +24,16 @@ When you choose to use the "Auto-Detect Location" feature, the Extension request
 - Never shared with third parties beyond the single geocoding request
 - Requested only when you explicitly click the "Auto-Detect My Location" button
 
+### Email Address (Optional Signup)
+
+If you choose to sign up for "Season Alerts," the email address you enter is sent to our form provider (Formspree) so we can email you occasional hunting-season reminders and Hunt Clock updates. This is:
+- Entirely optional — the Extension works fully without it
+- Only submitted when you enter your email, check the consent box, and press Subscribe
+- Used only to send you the emails described above
+- Never sold or shared for advertising
+
+You can unsubscribe at any time using the link in any email, or request removal by contacting us at the address below.
+
 ## How We Use Your Information
 
 Your information is used solely to:
@@ -59,6 +69,9 @@ When using location auto-detection, we send your coordinates to OpenStreetMap's 
 
 ### Google Fonts
 The Extension loads fonts from Google Fonts. Google's privacy policy applies: https://policies.google.com/privacy
+
+### Formspree
+Used only if you opt in to Season Alerts, to receive and store the email address you submit. Their privacy policy: https://formspree.io/legal/privacy-policy/
 
 ## Children's Privacy
 

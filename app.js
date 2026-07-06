@@ -846,8 +846,9 @@ function openPrivacyModal() {
       <ul>
         <li>Your selected state and county (for displaying relevant hunting seasons)</li>
         <li>Custom hunting seasons you create</li>
-        <li>Your display name (if you choose to log in)</li>
+        <li>Your display name (optional)</li>
       </ul>
+      <p>If you opt in to Season Alerts, the email address you submit is sent to our form provider (Formspree) to email you season reminders and updates. This is optional and you can unsubscribe anytime.</p>
       
       <h3 class="privacy-subheading">How We Use Your Information</h3>
       <p>All information is stored locally using Chrome's storage API and is used solely to personalize your new tab experience. We do not transmit any personal data to external servers.</p>
@@ -873,9 +874,70 @@ function openPrivacyModal() {
 function closePrivacyModal() {
   const modal = document.getElementById('privacy-modal');
   const overlay = document.getElementById('modal-overlay');
-  
+
   if (modal) modal.classList.remove('active');
   if (overlay) overlay.classList.remove('active');
+}
+
+// ============================================
+// EMAIL SIGNUP (optional, opt-in)
+// ============================================
+
+// Create a free form at https://formspree.io and paste its endpoint here,
+// e.g. 'https://formspree.io/f/abcdwxyz'. Until then, signup is disabled.
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+function openSignupModal() {
+  const modal = document.getElementById('signup-modal');
+  const overlay = document.getElementById('modal-overlay');
+  const status = document.getElementById('signup-status');
+  if (status) status.textContent = '';
+  if (modal) modal.classList.add('active');
+  if (overlay) overlay.classList.add('active');
+}
+
+function closeSignupModal() {
+  const modal = document.getElementById('signup-modal');
+  const overlay = document.getElementById('modal-overlay');
+  if (modal) modal.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+}
+
+async function handleSignup(e) {
+  e.preventDefault();
+  const emailEl = document.getElementById('signup-email');
+  const consentEl = document.getElementById('signup-consent');
+  const statusEl = document.getElementById('signup-status');
+  const submitBtn = document.querySelector('#signup-form .add-button');
+
+  if (!emailEl || !emailEl.value || !consentEl || !consentEl.checked) return;
+
+  if (FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) {
+    if (statusEl) statusEl.textContent = 'Email signup is not configured yet.';
+    return;
+  }
+
+  if (statusEl) statusEl.textContent = 'Subscribing…';
+  if (submitBtn) submitBtn.disabled = true;
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email: emailEl.value, source: 'Hunt Clock extension' })
+    });
+    if (res.ok) {
+      if (statusEl) statusEl.textContent = 'Subscribed — thanks!';
+      emailEl.value = '';
+      consentEl.checked = false;
+      setTimeout(closeSignupModal, 1200);
+    } else {
+      if (statusEl) statusEl.textContent = 'Something went wrong. Please try again.';
+    }
+  } catch (err) {
+    if (statusEl) statusEl.textContent = 'Network error. Please try again.';
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
 }
 
 // ============================================
@@ -978,10 +1040,22 @@ function setupEventListeners() {
   if (menuAddSeason) {
     menuAddSeason.onclick = () => { closeMenu(); openCustomSeasonModal(); };
   }
+  const menuAlerts = document.getElementById('menu-alerts');
+  if (menuAlerts) {
+    menuAlerts.onclick = () => { closeMenu(); openSignupModal(); };
+  }
   const menuPrivacy = document.getElementById('menu-privacy');
   if (menuPrivacy) {
     menuPrivacy.onclick = () => { closeMenu(); openPrivacyModal(); };
   }
+
+  // Email signup modal
+  const signupForm = document.getElementById('signup-form');
+  if (signupForm) signupForm.onsubmit = handleSignup;
+  const closeSignupBtn = document.getElementById('close-signup-modal');
+  if (closeSignupBtn) closeSignupBtn.onclick = closeSignupModal;
+  const signupPrivacyLink = document.getElementById('signup-privacy-link');
+  if (signupPrivacyLink) signupPrivacyLink.onclick = () => { closeSignupModal(); openPrivacyModal(); };
   
   // State select change
   const stateSelect = document.getElementById('state-select');
@@ -1046,6 +1120,7 @@ function setupEventListeners() {
       closeCustomSeasonModal();
       closeLocationModal();
       closePrivacyModal();
+      closeSignupModal();
     };
   }
   
@@ -1055,6 +1130,7 @@ function setupEventListeners() {
       closeCustomSeasonModal();
       closeLocationModal();
       closePrivacyModal();
+      closeSignupModal();
       closeMenu();
       closeSearch();
     }
