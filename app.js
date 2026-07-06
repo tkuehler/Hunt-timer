@@ -7,6 +7,19 @@
 
 document.addEventListener('DOMContentLoaded', init);
 
+// Soonest upcoming season, used by the greeting. Set in updateCountdowns().
+let soonestSeason = null;
+
+// Id of the season currently being edited via the card modal (null = adding new).
+let editingSeasonId = null;
+
+// True when today falls within a season's window. Requires endMonth/endDay in the
+// season data; without them we can't know the season is open, so we return false.
+function seasonIsActive(season) {
+  if (season == null || season.endMonth == null || season.endDay == null) return false;
+  return isSeasonActive(season.month, season.day, season.endMonth, season.endDay);
+}
+
 function init() {
   // Load user preferences from storage
   loadUserPreferences();
@@ -17,9 +30,12 @@ function init() {
   // Populate Texas county dropdown if Texas is selected
   populateTexasCountyDropdown();
   
-  // Set random background image
-  setRandomBackground();
-  
+  // Set the daily background image
+  setDailyBackground();
+
+  // Show a random hunting quote
+  setRandomQuote();
+
   // Show time and update countdowns
   showTime();
   updateCountdowns();
@@ -69,50 +85,100 @@ function showTime() {
   } else if (hour < 17) {
     greetingText = 'Good afternoon';
   }
-  
-  // Add user name if available
-  const userName = localStorage.getItem('hunterName') || 'hunter';
-  greeting.textContent = `${greetingText}, ${userName}`;
+
+  // Build the greeting: use a live countdown to the soonest season when we have
+  // one, otherwise fall back to a simple (optionally personalized) greeting.
+  const userName = localStorage.getItem('hunterName');
+  const namePart = userName ? `, ${userName}` : '';
+
+  if (soonestSeason && soonestSeason.active) {
+    greeting.textContent = `${greetingText}${namePart} — ${soonestSeason.name} is in season now!`;
+  } else if (soonestSeason) {
+    if (soonestSeason.days === 0) {
+      greeting.textContent = `${greetingText}${namePart} — ${soonestSeason.name} opens today!`;
+    } else {
+      const dayWord = soonestSeason.days === 1 ? 'day' : 'days';
+      greeting.textContent = `${greetingText}${namePart} — it's only ${soonestSeason.days} ${dayWord} until ${soonestSeason.name}`;
+    }
+  } else {
+    greeting.textContent = `${greetingText}${userName ? namePart : ', hunter'}`;
+  }
 }
 
 // ============================================
 // BACKGROUND IMAGES
 // ============================================
 
-function setRandomBackground() {
+function setDailyBackground() {
+  const gradient = 'linear-gradient(135deg, #1a3a1a 0%, #2d4a2d 50%, #3d5a3d 100%)';
   try {
-    const currentMonth = new Date().getMonth();
-    let season;
-    
-    if (currentMonth >= 2 && currentMonth <= 4) {
-      season = 'spring';
-    } else if (currentMonth >= 5 && currentMonth <= 7) {
-      season = 'summer';
-    } else if (currentMonth >= 8 && currentMonth <= 10) {
-      season = 'fall';
-    } else {
-      season = 'winter';
+    if (!Array.isArray(backgroundImages) || backgroundImages.length === 0) {
+      document.body.style.background = gradient;
+      return;
     }
-    
-    // Filter images by season
-    const seasonImages = backgroundImages.filter(img => img.season === season || img.season === 'all');
-    const imagesToUse = seasonImages.length > 0 ? seasonImages : backgroundImages;
-    
-    // Select random image
-    const randomImage = imagesToUse[Math.floor(Math.random() * imagesToUse.length)];
-    
-    if (randomImage && randomImage.url) {
-      // For Chrome extension, use chrome.runtime.getURL for local images
-      const imageUrl = randomImage.url.startsWith('/') 
-        ? chrome.runtime.getURL('images' + randomImage.url)
-        : randomImage.url;
-      document.body.style.backgroundImage = `url('${imageUrl}')`;
-    }
+
+    // Day number since the epoch → same image all day, a new one each day,
+    // cycling through the whole list.
+    const dayNumber = Math.floor(Date.now() / 86400000);
+    const path = backgroundImages[dayNumber % backgroundImages.length];
+
+    // Resolve to an extension URL when running as an extension; fall back to the
+    // relative path otherwise (e.g. local preview).
+    const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+      ? chrome.runtime.getURL(path)
+      : path;
+
+    // Preload so we swap in the image only once it's ready (no flash).
+    const img = new Image();
+    img.onload = () => { document.body.style.backgroundImage = `url('${url}')`; };
+    img.onerror = () => { document.body.style.background = gradient; };
+    img.src = url;
   } catch (error) {
     console.error('Error setting background:', error);
-    // Fallback to a gradient
-    document.body.style.background = 'linear-gradient(135deg, #1a3a1a 0%, #2d4a2d 50%, #3d5a3d 100%)';
+    document.body.style.background = gradient;
   }
+}
+
+// ============================================
+// HUNTING QUOTES
+// ============================================
+
+const huntingQuotes = [
+  { text: "The wildlife and its habitat cannot speak, so we must and we will.", author: "Theodore Roosevelt" },
+  { text: "The true hunter counts his achievement in proportion to the effort involved and the fairness of the sport.", author: "Jack O'Connor" },
+  { text: "In every walk with nature one receives far more than he seeks.", author: "John Muir" },
+  { text: "There is a delight in the hardy life of the open. There are no words that can tell the hidden spirit of the wilderness.", author: "Theodore Roosevelt" },
+  { text: "A hunt based only on the trophies taken falls far short of what the ultimate goal should be.", author: "Fred Bear" },
+  { text: "Nobody can grant you the right to bear arms. It's something you're born with.", author: "Ted Nugent" },
+  { text: "The gun has been called the great equalizer, meaning that a small person with a gun is equal to a large person.", author: "Roy Rogers" },
+  { text: "Conservation is a state of harmony between men and land.", author: "Aldo Leopold" },
+  { text: "When the hunter is in the woods, the rest of the world disappears.", author: "Anonymous" },
+  { text: "Hunting is not a matter of life and death. It is far more important than that.", author: "Robert Ruark" },
+  { text: "The wilderness holds answers to questions man has not yet learned to ask.", author: "Nancy Wynne Newhall" },
+  { text: "Good things come to those who bait.", author: "Anonymous" },
+  { text: "We don't stop hunting because we grow old — we grow old because we stop hunting.", author: "Anonymous" },
+  { text: "May your blind be warm, your aim be true, and your freezer full.", author: "Anonymous" },
+  // Theodore Roosevelt
+  { text: "In hunting, the finding and killing of the game is after all but a part of the whole.", author: "Theodore Roosevelt" },
+  { text: "The farther one gets into the wilderness, the greater is the attraction of its lonely freedom.", author: "Theodore Roosevelt" },
+  // Ted Nugent
+  { text: "Hunting is the last perfect thing.", author: "Ted Nugent" },
+  { text: "My idea of fast food is a mallard.", author: "Ted Nugent" },
+  // Steven Rinella
+  { text: "Just the pursuit of the ingredients is some of the best exercise you can get.", author: "Steven Rinella" },
+  // Ernest Hemingway
+  { text: "Perhaps I should not have been a fisherman. But that was the thing that I was born for.", author: "Ernest Hemingway" },
+  { text: "When you have shot one bird flying you have shot all birds flying.", author: "Ernest Hemingway" },
+  // Mark Twain
+  { text: "To one in sympathy with nature, each season, in its turn, seems the loveliest.", author: "Mark Twain" },
+  { text: "One can enjoy a rainbow without necessarily forgetting the forces that made it.", author: "Mark Twain" }
+];
+
+function setRandomQuote() {
+  const el = document.getElementById('quote');
+  if (!el) return;
+  const q = huntingQuotes[Math.floor(Math.random() * huntingQuotes.length)];
+  el.innerHTML = `&ldquo;${q.text}&rdquo;<span class="quote-author">— ${q.author}</span>`;
 }
 
 // ============================================
@@ -367,33 +433,20 @@ function updateCountdowns() {
     const countySeasons = window.texasCountySeasons[savedCounty];
     if (countySeasons) {
       // Auto-add deer, dove, and turkey for Texas counties
-      if (countySeasons.whitetail_deer) {
-        defaultSeasons.push({
-          id: 'whitetail_deer',
-          name: countySeasons.whitetail_deer.name,
-          month: countySeasons.whitetail_deer.month,
-          day: countySeasons.whitetail_deer.day,
-          isDefault: true
-        });
-      }
-      if (countySeasons.dove) {
-        defaultSeasons.push({
-          id: 'dove',
-          name: countySeasons.dove.name,
-          month: countySeasons.dove.month,
-          day: countySeasons.dove.day,
-          isDefault: true
-        });
-      }
-      if (countySeasons.turkey_spring) {
-        defaultSeasons.push({
-          id: 'turkey_spring',
-          name: countySeasons.turkey_spring.name,
-          month: countySeasons.turkey_spring.month,
-          day: countySeasons.turkey_spring.day,
-          isDefault: true
-        });
-      }
+      ['whitetail_deer', 'dove', 'turkey_spring'].forEach(key => {
+        const s = countySeasons[key];
+        if (s) {
+          defaultSeasons.push({
+            id: key,
+            name: s.name,
+            month: s.month,
+            day: s.day,
+            endMonth: s.endMonth,
+            endDay: s.endDay,
+            isDefault: true
+          });
+        }
+      });
     }
   } else if (savedState && huntingSeasonsByState[savedState]) {
     // Use state-specific seasons
@@ -405,72 +458,100 @@ function updateCountdowns() {
         name: season.name,
         month: season.month,
         day: season.day,
-        isDefault: true
-      });
-    });
-  } else if (huntingSeasonsByState.default) {
-    // Use default seasons
-    const defaultStateSeasons = huntingSeasonsByState.default;
-    Object.keys(defaultStateSeasons).forEach(key => {
-      const season = defaultStateSeasons[key];
-      defaultSeasons.push({
-        id: key,
-        name: season.name,
-        month: season.month,
-        day: season.day,
+        endMonth: season.endMonth,
+        endDay: season.endDay,
         isDefault: true
       });
     });
   }
+  // No location set → no generic seasons; an empty-state prompt is shown below.
   
-  // Combine default and custom seasons
-  const allSeasons = [...defaultSeasons, ...customSeasons];
-  
+  // An edited season (saved as custom with the same id) overrides its default
+  const overriddenIds = new Set(customSeasons.map(c => c.id));
+  const activeDefaults = defaultSeasons.filter(d => !overriddenIds.has(d.id));
+
+  // Combine location-based and custom seasons
+  const allSeasons = [...activeDefaults, ...customSeasons];
+
+  // Greeting: prefer a season that is open right now, otherwise the soonest one
+  soonestSeason = null;
+  const openNow = allSeasons.find(seasonIsActive);
+  if (openNow) {
+    soonestSeason = { name: openNow.name, days: 0, active: true };
+  } else {
+    allSeasons.forEach(season => {
+      const d = calculateDaysUntil(season.month, season.day);
+      if (soonestSeason === null || d < soonestSeason.days) {
+        soonestSeason = { name: season.name, days: d };
+      }
+    });
+  }
+
   // Clear container
   container.innerHTML = '';
-  
-  // Create countdown tiles
+
+  // Empty state: prompt to set a location instead of showing generic seasons
+  if (allSeasons.length === 0) {
+    const prompt = document.createElement('div');
+    prompt.className = 'empty-prompt';
+    prompt.innerHTML = '<p class="empty-text">Set your location to see your hunting season countdowns.</p>';
+    const btn = document.createElement('button');
+    btn.className = 'add-button empty-cta';
+    btn.textContent = 'Set Location';
+    btn.onclick = openLocationModal;
+    prompt.appendChild(btn);
+    container.appendChild(prompt);
+    showTime(); // refresh greeting (no season → simple greeting)
+    return;
+  }
+
+  // Create countdown tiles (Add Season now lives in the top-right menu)
   allSeasons.forEach(season => {
     const days = calculateDaysUntil(season.month, season.day);
     const tile = createCountdownTile(season, days);
     container.appendChild(tile);
   });
-  
-  // Add "Add Season" button tile
-  const addTile = document.createElement('div');
-  addTile.className = 'countdown add-tile';
-  addTile.innerHTML = `
-    <div class="days">+</div>
-    <div class="label">Add Season</div>
-  `;
-  addTile.style.cursor = 'pointer';
-  addTile.onclick = openCustomSeasonModal;
-  container.appendChild(addTile);
+
+  // Refresh greeting now that we know the soonest / open season
+  showTime();
 }
 
 function createCountdownTile(season, days) {
   const tile = document.createElement('div');
   tile.className = 'countdown';
   tile.dataset.seasonId = season.id;
-  
+  tile.style.cursor = 'pointer';
+  tile.title = 'Click to edit · Right-click for TPWD regulations';
+
+  const active = seasonIsActive(season);
   let statusText = 'days until';
   let daysDisplay = days;
-  
-  if (days === 0) {
+
+  if (active) {
+    statusText = 'In season now';
+    daysDisplay = 'OPEN';
+    tile.classList.add('in-season');
+  } else if (days === 0) {
     statusText = 'Opens today!';
     daysDisplay = '';
-  } else if (days < 0) {
-    statusText = 'Season is open!';
-    daysDisplay = 'NOW';
   }
-  
+
   tile.innerHTML = `
     <div class="days">${daysDisplay}</div>
     <div class="label">${statusText}<br><strong>${season.name}</strong></div>
     ${!season.isDefault ? '<button class="remove-season" aria-label="Remove season">×</button>' : ''}
   `;
-  
-  // Add remove functionality for custom seasons
+
+  // Click a card to edit its name/date
+  tile.addEventListener('click', () => openEditSeason(season));
+
+  // Right-click a card → TPWD regulations for the selected county
+  tile.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    openTpwdRegs();
+  });
+
+  // Remove button (custom / edited seasons only)
   const removeBtn = tile.querySelector('.remove-season');
   if (removeBtn) {
     removeBtn.onclick = (e) => {
@@ -478,8 +559,19 @@ function createCountdownTile(season, days) {
       removeSeason(season.id);
     };
   }
-  
+
   return tile;
+}
+
+function openTpwdRegs() {
+  const county = localStorage.getItem('selectedCounty');
+  const state = localStorage.getItem('selectedState');
+  let url = 'https://tpwd.texas.gov/regulations/outdoor-annual/';
+  if (state === 'TX' && county) {
+    url = 'https://www.google.com/search?q=' +
+      encodeURIComponent('site:tpwd.texas.gov ' + county + ' County hunting seasons');
+  }
+  window.open(url, '_blank', 'noopener');
 }
 
 function removeSeason(seasonId) {
@@ -496,12 +588,43 @@ function removeSeason(seasonId) {
 function openCustomSeasonModal() {
   const modal = document.getElementById('custom-season-modal');
   const overlay = document.getElementById('modal-overlay');
-  
+
+  // Default to "add" mode; openEditSeason() overrides this afterwards.
+  editingSeasonId = null;
+  const title = document.getElementById('custom-season-title');
+  if (title) title.textContent = 'Add Custom Season';
+  const submitBtn = document.querySelector('#season-form .add-button');
+  if (submitBtn) submitBtn.textContent = 'Add Season';
+
   if (modal) modal.classList.add('active');
   if (overlay) overlay.classList.add('active');
-  
+
   // Populate season type dropdown with county-specific options
   populateSeasonTypeDropdown();
+}
+
+// Open the modal pre-filled to edit an existing card's name and date.
+function openEditSeason(season) {
+  openCustomSeasonModal();
+  editingSeasonId = season.id;
+
+  const title = document.getElementById('custom-season-title');
+  if (title) title.textContent = 'Edit Season';
+  const submitBtn = document.querySelector('#season-form .add-button');
+  if (submitBtn) submitBtn.textContent = 'Save Changes';
+
+  const seasonType = document.getElementById('season-type');
+  const customNameGroup = document.getElementById('custom-name-group');
+  const customName = document.getElementById('custom-name');
+  const dateInput = document.getElementById('season-date');
+
+  if (seasonType) seasonType.value = 'custom';
+  if (customNameGroup) customNameGroup.style.display = 'block';
+  if (customName) customName.value = season.name;
+  if (dateInput) {
+    const y = new Date().getFullYear();
+    dateInput.value = `${y}-${String(season.month).padStart(2, '0')}-${String(season.day).padStart(2, '0')}`;
+  }
 }
 
 function closeCustomSeasonModal() {
@@ -514,10 +637,17 @@ function closeCustomSeasonModal() {
   // Reset form
   const form = document.getElementById('season-form');
   if (form) form.reset();
-  
+
   // Hide custom name field
   const customNameGroup = document.getElementById('custom-name-group');
   if (customNameGroup) customNameGroup.style.display = 'none';
+
+  // Reset edit state / labels back to "add" mode
+  editingSeasonId = null;
+  const title = document.getElementById('custom-season-title');
+  if (title) title.textContent = 'Add Custom Season';
+  const submitBtn = document.querySelector('#season-form .add-button');
+  if (submitBtn) submitBtn.textContent = 'Add Season';
 }
 
 function populateSeasonTypeDropdown() {
@@ -610,23 +740,26 @@ function addCustomSeason(e) {
   
   if (!seasonType || !seasonDate) return;
   
+  if (!seasonDate.value) return;
   const selectedOption = seasonType.options[seasonType.selectedIndex];
-  const name = seasonType.value === 'custom' ? customName.value : selectedOption.textContent;
-  const date = new Date(seasonDate.value);
-  
-  const newSeason = {
-    id: 'custom_' + Date.now(),
-    name: name,
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-    isDefault: false
-  };
-  
-  // Save to localStorage
+  const name = (seasonType.value === 'custom' ? customName.value.trim() : selectedOption.textContent) || 'Season';
+  // Parse YYYY-MM-DD by parts to avoid timezone shifting the day
+  const [, month, day] = seasonDate.value.split('-').map(Number);
+
   const customSeasons = JSON.parse(localStorage.getItem('customSeasons') || '[]');
-  customSeasons.push(newSeason);
+
+  if (editingSeasonId) {
+    // Editing: replace the season with this id (an edit of a default becomes an override)
+    const idx = customSeasons.findIndex(s => s.id === editingSeasonId);
+    const edited = { id: editingSeasonId, name, month, day, isDefault: false };
+    if (idx >= 0) customSeasons[idx] = edited;
+    else customSeasons.push(edited);
+  } else {
+    customSeasons.push({ id: 'custom_' + Date.now(), name, month, day, isDefault: false });
+  }
+
   localStorage.setItem('customSeasons', JSON.stringify(customSeasons));
-  
+
   // Close modal and update
   closeCustomSeasonModal();
   updateCountdowns();
@@ -750,27 +883,54 @@ function closePrivacyModal() {
 // ============================================
 
 function toggleSearch() {
-  const searchForm = document.getElementById('search-form');
-  const searchInput = document.getElementById('search-input');
-  
-  if (searchForm.style.display === 'none') {
-    searchForm.style.display = 'flex';
-    searchInput.focus();
-  } else {
-    searchForm.style.display = 'none';
+  const corner = document.getElementById('search-corner');
+  if (!corner) return;
+  const willOpen = !corner.classList.contains('open');
+  corner.classList.toggle('open', willOpen);
+  closeMenu();
+  if (willOpen) {
+    const input = document.getElementById('search-input');
+    if (input) setTimeout(() => input.focus(), 50);
   }
+}
+
+function closeSearch() {
+  const corner = document.getElementById('search-corner');
+  if (corner) corner.classList.remove('open');
 }
 
 function handleSearch(e) {
   e.preventDefault();
   const searchInput = document.getElementById('search-input');
   const query = searchInput.value.trim();
-  
+
   if (query) {
-    // Open Google search in new tab
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+    // Navigate the current tab to Google results
+    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
     searchInput.value = '';
+    closeSearch();
   }
+}
+
+// ============================================
+// CONFIG MENU (top-right 3-dot)
+// ============================================
+
+function toggleMenu() {
+  const menu = document.getElementById('menu-corner');
+  const btn = document.getElementById('menu-button');
+  if (!menu) return;
+  const willOpen = !menu.classList.contains('open');
+  menu.classList.toggle('open', willOpen);
+  if (btn) btn.setAttribute('aria-expanded', String(willOpen));
+  closeSearch();
+}
+
+function closeMenu() {
+  const menu = document.getElementById('menu-corner');
+  const btn = document.getElementById('menu-button');
+  if (menu) menu.classList.remove('open');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
 }
 
 // ============================================
@@ -805,10 +965,22 @@ function loadSavedSeasons() {
 // ============================================
 
 function setupEventListeners() {
-  // Settings button - opens location modal
-  const settingsBtn = document.getElementById('settings-button');
-  if (settingsBtn) {
-    settingsBtn.onclick = openLocationModal;
+  // Top-right 3-dot config menu
+  const menuButton = document.getElementById('menu-button');
+  if (menuButton) {
+    menuButton.onclick = (e) => { e.stopPropagation(); toggleMenu(); };
+  }
+  const menuLocation = document.getElementById('menu-location');
+  if (menuLocation) {
+    menuLocation.onclick = () => { closeMenu(); openLocationModal(); };
+  }
+  const menuAddSeason = document.getElementById('menu-add-season');
+  if (menuAddSeason) {
+    menuAddSeason.onclick = () => { closeMenu(); openCustomSeasonModal(); };
+  }
+  const menuPrivacy = document.getElementById('menu-privacy');
+  if (menuPrivacy) {
+    menuPrivacy.onclick = () => { closeMenu(); openPrivacyModal(); };
   }
   
   // State select change
@@ -849,12 +1021,7 @@ function setupEventListeners() {
     closeModalBtn.onclick = closeCustomSeasonModal;
   }
   
-  // Privacy button and modal
-  const privacyBtn = document.getElementById('privacy-button');
-  if (privacyBtn) {
-    privacyBtn.onclick = openPrivacyModal;
-  }
-  
+  // Privacy modal close button (privacy is opened from the menu)
   const closePrivacyBtn = document.getElementById('close-privacy-modal');
   if (closePrivacyBtn) {
     closePrivacyBtn.onclick = closePrivacyModal;
@@ -888,6 +1055,14 @@ function setupEventListeners() {
       closeCustomSeasonModal();
       closeLocationModal();
       closePrivacyModal();
+      closeMenu();
+      closeSearch();
     }
+  });
+
+  // Click outside the menu / search to close them
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#menu-corner')) closeMenu();
+    if (!e.target.closest('#search-corner')) closeSearch();
   });
 }

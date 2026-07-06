@@ -64,13 +64,15 @@ const huntingSeasonsByState = {
     elk: { name: "Elk", month: 8, day: 15 },
   },
 
-  // Texas seasons
+  // Texas seasons. endMonth/endDay are APPROXIMATE general-season windows used only
+  // to light up the "in season now" indicator — verify exact dates against the
+  // official TPWD Outdoor Annual before relying on them.
   TX: {
-    deer: { name: "Whitetail Deer", month: 10, day: 29 },
-    turkey: { name: "Turkey", month: 3, day: 18 },
-    dove: { name: "Dove", month: 8, day: 31 },
-    quail: { name: "Quail", month: 9, day: 24 },
-    duck: { name: "Duck", month: 10, day: 28 },
+    deer: { name: "Whitetail Deer", month: 10, day: 29, endMonth: 1, endDay: 5 },
+    turkey: { name: "Turkey", month: 3, day: 18, endMonth: 5, endDay: 12 },
+    dove: { name: "Dove", month: 8, day: 31, endMonth: 10, endDay: 30 },
+    quail: { name: "Quail", month: 9, day: 24, endMonth: 2, endDay: 28 },
+    duck: { name: "Duck", month: 10, day: 28, endMonth: 1, endDay: 26 },
   },
 
   // Colorado seasons
