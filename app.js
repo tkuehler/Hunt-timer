@@ -7,8 +7,8 @@
 
 document.addEventListener('DOMContentLoaded', init);
 
-// Soonest upcoming season, used by the greeting. Set in updateCountdowns().
-let soonestSeason = null;
+// Whether any season cards are shown (drives the greeting wording).
+let hasSeasonCards = false;
 
 // Id of the season currently being edited via the card modal (null = adding new).
 let editingSeasonId = null;
@@ -18,6 +18,16 @@ let editingSeasonId = null;
 function seasonIsActive(season) {
   if (season == null || season.endMonth == null || season.endDay == null) return false;
   return isSeasonActive(season.month, season.day, season.endMonth, season.endDay);
+}
+
+// Days remaining until a season's end date (only meaningful while it's active).
+function daysUntilEnd(season) {
+  if (season == null || season.endMonth == null || season.endDay == null) return null;
+  const now = new Date();
+  const year = now.getFullYear();
+  let end = new Date(year, season.endMonth - 1, season.endDay, 23, 59, 59);
+  if (end < now) end = new Date(year + 1, season.endMonth - 1, season.endDay, 23, 59, 59);
+  return Math.ceil((end - now) / (1000 * 60 * 60 * 24));
 }
 
 function init() {
@@ -51,6 +61,9 @@ function init() {
   
   // Load saved seasons
   loadSavedSeasons();
+
+  // Render the to-do list
+  renderTodos();
 }
 
 // ============================================
@@ -91,18 +104,10 @@ function showTime() {
   const userName = localStorage.getItem('hunterName');
   const namePart = userName ? `, ${userName}` : '';
 
-  if (soonestSeason && soonestSeason.active) {
-    greeting.textContent = `${greetingText}${namePart} — ${soonestSeason.name} is in season now!`;
-  } else if (soonestSeason) {
-    if (soonestSeason.days === 0) {
-      greeting.textContent = `${greetingText}${namePart} — ${soonestSeason.name} opens today!`;
-    } else {
-      const dayWord = soonestSeason.days === 1 ? 'day' : 'days';
-      greeting.textContent = `${greetingText}${namePart} — it's only ${soonestSeason.days} ${dayWord} until ${soonestSeason.name}`;
-    }
-  } else {
-    greeting.textContent = `${greetingText}${userName ? namePart : ', hunter'}`;
-  }
+  // "Good evening, Name, it's only" leads into the countdown cards below.
+  greeting.textContent = hasSeasonCards
+    ? `${greetingText}${namePart}, it's only`
+    : `${greetingText}${userName ? namePart : ', hunter'}`;
 }
 
 // ============================================
@@ -472,20 +477,7 @@ function updateCountdowns() {
 
   // Combine location-based and custom seasons
   const allSeasons = [...activeDefaults, ...customSeasons];
-
-  // Greeting: prefer a season that is open right now, otherwise the soonest one
-  soonestSeason = null;
-  const openNow = allSeasons.find(seasonIsActive);
-  if (openNow) {
-    soonestSeason = { name: openNow.name, days: 0, active: true };
-  } else {
-    allSeasons.forEach(season => {
-      const d = calculateDaysUntil(season.month, season.day);
-      if (soonestSeason === null || d < soonestSeason.days) {
-        soonestSeason = { name: season.name, days: d };
-      }
-    });
-  }
+  hasSeasonCards = allSeasons.length > 0;
 
   // Clear container
   container.innerHTML = '';
@@ -528,9 +520,15 @@ function createCountdownTile(season, days) {
   let daysDisplay = days;
 
   if (active) {
-    statusText = 'In season now';
-    daysDisplay = 'OPEN';
     tile.classList.add('in-season');
+    const left = daysUntilEnd(season);
+    if (left != null) {
+      daysDisplay = left;
+      statusText = (left === 1 ? 'day left in' : 'days left in');
+    } else {
+      daysDisplay = 'OPEN';
+      statusText = 'In season now';
+    }
   } else if (days === 0) {
     statusText = 'Opens today!';
     daysDisplay = '';
@@ -621,9 +619,16 @@ function openEditSeason(season) {
   if (seasonType) seasonType.value = 'custom';
   if (customNameGroup) customNameGroup.style.display = 'block';
   if (customName) customName.value = season.name;
+  const y = new Date().getFullYear();
+  const pad = n => String(n).padStart(2, '0');
   if (dateInput) {
-    const y = new Date().getFullYear();
-    dateInput.value = `${y}-${String(season.month).padStart(2, '0')}-${String(season.day).padStart(2, '0')}`;
+    dateInput.value = `${y}-${pad(season.month)}-${pad(season.day)}`;
+  }
+  const endInput = document.getElementById('season-end-date');
+  if (endInput) {
+    endInput.value = (season.endMonth != null && season.endDay != null)
+      ? `${y}-${pad(season.endMonth)}-${pad(season.endDay)}`
+      : '';
   }
 }
 
@@ -746,16 +751,25 @@ function addCustomSeason(e) {
   // Parse YYYY-MM-DD by parts to avoid timezone shifting the day
   const [, month, day] = seasonDate.value.split('-').map(Number);
 
+  // Optional end date → enables the green "in season" state and days-left count
+  let endMonth = null, endDay = null;
+  const endEl = document.getElementById('season-end-date');
+  if (endEl && endEl.value) {
+    const [, em, ed] = endEl.value.split('-').map(Number);
+    endMonth = em; endDay = ed;
+  }
+
   const customSeasons = JSON.parse(localStorage.getItem('customSeasons') || '[]');
+  const record = { name, month, day, endMonth, endDay, isDefault: false };
 
   if (editingSeasonId) {
     // Editing: replace the season with this id (an edit of a default becomes an override)
     const idx = customSeasons.findIndex(s => s.id === editingSeasonId);
-    const edited = { id: editingSeasonId, name, month, day, isDefault: false };
+    const edited = { id: editingSeasonId, ...record };
     if (idx >= 0) customSeasons[idx] = edited;
     else customSeasons.push(edited);
   } else {
-    customSeasons.push({ id: 'custom_' + Date.now(), name, month, day, isDefault: false });
+    customSeasons.push({ id: 'custom_' + Date.now(), ...record });
   }
 
   localStorage.setItem('customSeasons', JSON.stringify(customSeasons));
@@ -848,7 +862,7 @@ function openPrivacyModal() {
         <li>Custom hunting seasons you create</li>
         <li>Your display name (optional)</li>
       </ul>
-      <p>If you opt in to Season Alerts, the email address you submit is sent to our form provider (Formspree) to email you season reminders and updates. This is optional and you can unsubscribe anytime.</p>
+      <p>If you opt in to Season Alerts, the email address you submit is stored in a private Google Sheet (via Google Forms) so we can email you season reminders and updates. This is optional and you can unsubscribe anytime.</p>
       
       <h3 class="privacy-subheading">How We Use Your Information</h3>
       <p>All information is stored locally using Chrome's storage API and is used solely to personalize your new tab experience. We do not transmit any personal data to external servers.</p>
@@ -883,9 +897,13 @@ function closePrivacyModal() {
 // EMAIL SIGNUP (optional, opt-in)
 // ============================================
 
-// Create a free form at https://formspree.io and paste its endpoint here,
-// e.g. 'https://formspree.io/f/abcdwxyz'. Until then, signup is disabled.
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+// Google Form → Google Sheet signup.
+// Setup: create a Google Form with ONE short-answer "Email" question. Open the live
+// form, right-click the email box → Inspect, and find its name="entry.NNNNNNN".
+// Put that in GOOGLE_FORM_EMAIL_FIELD, and put the form's URL (with /viewform swapped
+// for /formResponse) in GOOGLE_FORM_ACTION. Responses collect in the linked Sheet.
+const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+const GOOGLE_FORM_EMAIL_FIELD = 'entry.YOUR_ENTRY_ID';
 
 function openSignupModal() {
   const modal = document.getElementById('signup-modal');
@@ -912,7 +930,7 @@ async function handleSignup(e) {
 
   if (!emailEl || !emailEl.value || !consentEl || !consentEl.checked) return;
 
-  if (FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) {
+  if (GOOGLE_FORM_ACTION.includes('YOUR_FORM_ID') || GOOGLE_FORM_EMAIL_FIELD.includes('YOUR_ENTRY_ID')) {
     if (statusEl) statusEl.textContent = 'Email signup is not configured yet.';
     return;
   }
@@ -920,24 +938,30 @@ async function handleSignup(e) {
   if (statusEl) statusEl.textContent = 'Subscribing…';
   if (submitBtn) submitBtn.disabled = true;
   try {
-    const res = await fetch(FORMSPREE_ENDPOINT, {
+    const body = new URLSearchParams();
+    body.append(GOOGLE_FORM_EMAIL_FIELD, emailEl.value);
+    // Google Forms doesn't return CORS headers; no-cors submits successfully but
+    // gives an opaque response, so we treat a completed request as success.
+    await fetch(GOOGLE_FORM_ACTION, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email: emailEl.value, source: 'Hunt Clock extension' })
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString()
     });
-    if (res.ok) {
-      if (statusEl) statusEl.textContent = 'Subscribed — thanks!';
-      emailEl.value = '';
-      consentEl.checked = false;
-      setTimeout(closeSignupModal, 1200);
-    } else {
-      if (statusEl) statusEl.textContent = 'Something went wrong. Please try again.';
-    }
+    if (statusEl) statusEl.textContent = 'Subscribed — thanks!';
+    emailEl.value = '';
+    consentEl.checked = false;
+    setTimeout(closeSignupModal, 1200);
   } catch (err) {
     if (statusEl) statusEl.textContent = 'Network error. Please try again.';
   } finally {
     if (submitBtn) submitBtn.disabled = false;
   }
+}
+
+// About → open the project's Instagram in a new tab
+function openAbout() {
+  window.open('https://www.instagram.com/braca_co/', '_blank', 'noopener');
 }
 
 // ============================================
@@ -1023,6 +1047,79 @@ function loadSavedSeasons() {
 }
 
 // ============================================
+// TO-DO LIST (up to 5 items, saved locally)
+// ============================================
+
+const MAX_TODOS = 5;
+
+function getTodos() {
+  return JSON.parse(localStorage.getItem('huntTodos') || '[]');
+}
+
+function saveTodos(todos) {
+  localStorage.setItem('huntTodos', JSON.stringify(todos));
+  renderTodos();
+}
+
+function renderTodos() {
+  const list = document.getElementById('todo-list');
+  if (!list) return;
+  const todos = getTodos();
+  list.innerHTML = '';
+
+  todos.forEach((t, i) => {
+    const item = document.createElement('div');
+    item.className = 'todo-item' + (t.done ? ' done' : '');
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.className = 'todo-check';
+    check.checked = !!t.done;
+    check.setAttribute('aria-label', 'Mark complete');
+    check.onchange = () => { const arr = getTodos(); arr[i].done = check.checked; saveTodos(arr); };
+
+    const text = document.createElement('span');
+    text.className = 'todo-text';
+    text.textContent = t.text;
+
+    const remove = document.createElement('button');
+    remove.className = 'todo-remove';
+    remove.setAttribute('aria-label', 'Remove task');
+    remove.textContent = '×';
+    remove.onclick = () => { const arr = getTodos(); arr.splice(i, 1); saveTodos(arr); };
+
+    item.append(check, text, remove);
+    list.appendChild(item);
+  });
+
+  if (todos.length < MAX_TODOS) {
+    const form = document.createElement('form');
+    form.className = 'todo-add';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'todo-input';
+    input.placeholder = 'Add a task…';
+    input.maxLength = 60;
+    input.setAttribute('aria-label', 'New task');
+    const add = document.createElement('button');
+    add.type = 'submit';
+    add.className = 'todo-add-btn';
+    add.setAttribute('aria-label', 'Add task');
+    add.textContent = '+';
+    form.append(input, add);
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const v = input.value.trim();
+      const arr = getTodos();
+      if (!v || arr.length >= MAX_TODOS) return;
+      arr.push({ text: v, done: false });
+      saveTodos(arr);
+    };
+    list.appendChild(form);
+  }
+}
+
+// ============================================
 // EVENT LISTENERS
 // ============================================
 
@@ -1047,6 +1144,10 @@ function setupEventListeners() {
   const menuPrivacy = document.getElementById('menu-privacy');
   if (menuPrivacy) {
     menuPrivacy.onclick = () => { closeMenu(); openPrivacyModal(); };
+  }
+  const menuAbout = document.getElementById('menu-about');
+  if (menuAbout) {
+    menuAbout.onclick = () => { closeMenu(); openAbout(); };
   }
 
   // Email signup modal

@@ -26,7 +26,7 @@ When you choose to use the "Auto-Detect Location" feature, the Extension request
 
 ### Email Address (Optional Signup)
 
-If you choose to sign up for "Season Alerts," the email address you enter is sent to our form provider (Formspree) so we can email you occasional hunting-season reminders and Hunt Clock updates. This is:
+If you choose to sign up for "Season Alerts," the email address you enter is submitted through Google Forms and stored in a private Google Sheet we control, so we can email you occasional hunting-season reminders and Hunt Clock updates. This is:
 - Entirely optional — the Extension works fully without it
 - Only submitted when you enter your email, check the consent box, and press Subscribe
 - Used only to send you the emails described above
@@ -70,8 +70,8 @@ When using location auto-detection, we send your coordinates to OpenStreetMap's 
 ### Google Fonts
 The Extension loads fonts from Google Fonts. Google's privacy policy applies: https://policies.google.com/privacy
 
-### Formspree
-Used only if you opt in to Season Alerts, to receive and store the email address you submit. Their privacy policy: https://formspree.io/legal/privacy-policy/
+### Google Forms / Google Sheets
+Used only if you opt in to Season Alerts, to receive and store the email address you submit. Google's privacy policy: https://policies.google.com/privacy
 
 ## Children's Privacy
 
