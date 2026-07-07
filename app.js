@@ -905,8 +905,8 @@ function closePrivacyModal() {
 // form, right-click the email box → Inspect, and find its name="entry.NNNNNNN".
 // Put that in GOOGLE_FORM_EMAIL_FIELD, and put the form's URL (with /viewform swapped
 // for /formResponse) in GOOGLE_FORM_ACTION. Responses collect in the linked Sheet.
-const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
-const GOOGLE_FORM_EMAIL_FIELD = 'entry.YOUR_ENTRY_ID';
+const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSfaqHQbpY6MaW0f6EQQMAnzya0fvOIDlPLBBCC6ebtsh4PZsg/formResponse';
+const GOOGLE_FORM_EMAIL_FIELD = 'entry.2092828610';
 
 function openSignupModal() {
   const modal = document.getElementById('signup-modal');
