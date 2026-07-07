@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Hunt Clock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A beautiful new tab for hunters with hunting season countdowns and geolocation-based Texas county regulations from TPWD.",
   "permissions": ["geolocation"],
   "chrome_url_overrides": {
