@@ -264,14 +264,15 @@ window.texasCountySeasons = {
   // Sample counties with detailed season information
   // In production, this would include all 254 Texas counties
   Travis: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
+    // Official TPWD 2026-2027 dates (Travis = South Dove Zone, South Turkey Zone)
+    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 7, endMonth: 1, endDay: 17 },
+    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 30, endMonth: 1, endDay: 17 },
     mule_deer: { name: "Mule Deer", month: 11, day: 25 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    duck: { name: "Duck (South Zone)", month: 11, day: 11 },
+    turkey_fall: { name: "Fall Turkey", month: 11, day: 7, endMonth: 2, endDay: 28 },
+    turkey_spring: { name: "Spring Turkey", month: 3, day: 20, endMonth: 5, endDay: 2 },
+    dove: { name: "Dove (South Zone)", month: 9, day: 1, endMonth: 1, endDay: 21 },
+    quail: { name: "Quail", month: 11, day: 1, endMonth: 2, endDay: 28 },
+    duck: { name: "Duck (South Zone)", month: 11, day: 7, endMonth: 1, endDay: 31 },
     squirrel: { name: "Squirrel", month: 5, day: 1 },
     rabbit: { name: "Rabbit", month: 10, day: 1 },
   },

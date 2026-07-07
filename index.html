@@ -40,6 +40,10 @@
         <span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
         Add Season
       </button>
+      <button class="menu-item" id="menu-edit-layout" role="menuitem">
+        <span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg></span>
+        Edit Layout
+      </button>
       <button class="menu-item" id="menu-alerts" role="menuitem">
         <span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></span>
         Season Alerts
@@ -56,28 +60,34 @@
   </div>
 
   <div class="container">
-    <p class="quote" id="quote" aria-live="polite"></p>
+    <p class="quote movable" id="quote" data-layout="quote" aria-live="polite"></p>
 
-    <div class="time">
+    <div class="time movable" data-layout="time">
       <div id="clock" aria-live="polite">--:--</div>
       <div id="date" aria-live="polite">Loading...</div>
     </div>
 
-    <div class="greeting" id="greeting" aria-live="polite">Welcome, hunter</div>
+    <div class="greeting movable" id="greeting" data-layout="greeting" aria-live="polite">Welcome, hunter</div>
     
-    <div class="countdown-container" id="countdown-container" aria-label="Hunting season countdowns">
+    <div class="countdown-container movable" id="countdown-container" data-layout="countdowns" aria-label="Hunting season countdowns">
       <!-- Countdown tiles will be dynamically inserted here -->
     </div>
 
-    <div class="todo-section" id="todo-section" aria-label="To-do list">
+    <div class="todo-section movable" id="todo-section" data-layout="todo" aria-label="To-do list">
       <h2 class="todo-title">To-Do</h2>
       <div class="todo-list" id="todo-list"><!-- todo items inserted here --></div>
     </div>
     
-    <div class="footer">
+    <div class="footer movable" data-layout="footer">
       <span>Check your local wildlife agency for specific regulations</span>
       <div class="location" id="location">Location: <span id="location-text">Loading...</span></div>
     </div>
+  </div>
+
+  <div class="layout-toolbar" id="layout-toolbar">
+    <span class="layout-hint">Drag blocks to move · drag the green dot to resize</span>
+    <button class="add-button" id="layout-reset">Reset</button>
+    <button class="add-button" id="layout-done">Lock In</button>
   </div>
 
   <div class="modal-overlay" id="modal-overlay"></div>

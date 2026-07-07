@@ -64,6 +64,9 @@ function init() {
 
   // Render the to-do list
   renderTodos();
+
+  // Apply any saved custom layout (positions / sizes)
+  applySavedLayout();
 }
 
 // ============================================
@@ -965,6 +968,114 @@ function openAbout() {
 }
 
 // ============================================
+// LAYOUT EDITOR (movable + resizable blocks)
+// Fully opt-in and reversible: positions/sizes live in localStorage 'huntLayout';
+// "Reset" clears them and restores the default centered layout.
+// ============================================
+
+let layoutEditing = false;
+
+function getLayout() {
+  try { return JSON.parse(localStorage.getItem('huntLayout') || '{}'); }
+  catch (e) { return {}; }
+}
+
+function saveLayout(layout) {
+  localStorage.setItem('huntLayout', JSON.stringify(layout));
+}
+
+function applyBlockTransform(el, cfg) {
+  const x = cfg.x || 0, y = cfg.y || 0, s = cfg.scale || 1;
+  el.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+}
+
+function applySavedLayout() {
+  const layout = getLayout();
+  document.querySelectorAll('.movable').forEach(el => {
+    const id = el.dataset.layout;
+    if (layout[id]) applyBlockTransform(el, layout[id]);
+    else el.style.transform = '';
+  });
+}
+
+function enterLayoutEdit() {
+  layoutEditing = true;
+  document.body.classList.add('layout-edit');
+  const toolbar = document.getElementById('layout-toolbar');
+  if (toolbar) toolbar.classList.add('active');
+  document.querySelectorAll('.movable').forEach(setupBlockEditing);
+}
+
+function exitLayoutEdit() {
+  layoutEditing = false;
+  document.body.classList.remove('layout-edit');
+  const toolbar = document.getElementById('layout-toolbar');
+  if (toolbar) toolbar.classList.remove('active');
+  document.querySelectorAll('.resize-handle').forEach(h => h.remove());
+}
+
+function resetLayout() {
+  localStorage.removeItem('huntLayout');
+  document.querySelectorAll('.movable').forEach(el => { el.style.transform = ''; });
+}
+
+function setupBlockEditing(el) {
+  const id = el.dataset.layout;
+
+  // Resize handle (added while editing, removed on exit)
+  if (!el.querySelector('.resize-handle')) {
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    handle.title = 'Drag to resize';
+    el.appendChild(handle);
+    handle.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const layout = getLayout();
+      const cfg = layout[id] || { x: 0, y: 0, scale: 1 };
+      const startX = e.clientX, startScale = cfg.scale || 1;
+      handle.setPointerCapture(e.pointerId);
+      const move = (ev) => {
+        cfg.scale = Math.min(2, Math.max(0.5, startScale + (ev.clientX - startX) / 250));
+        applyBlockTransform(el, cfg);
+      };
+      const up = () => {
+        handle.removeEventListener('pointermove', move);
+        handle.removeEventListener('pointerup', up);
+        layout[id] = cfg; saveLayout(layout);
+      };
+      handle.addEventListener('pointermove', move);
+      handle.addEventListener('pointerup', up);
+    });
+  }
+
+  // Drag the block to move it (bound once; only active while editing)
+  if (!el.dataset.dragBound) {
+    el.dataset.dragBound = '1';
+    el.addEventListener('pointerdown', (e) => {
+      if (!layoutEditing || e.target.classList.contains('resize-handle')) return;
+      e.preventDefault();
+      const layout = getLayout();
+      const cfg = layout[id] || { x: 0, y: 0, scale: 1 };
+      const startX = e.clientX, startY = e.clientY;
+      const origX = cfg.x || 0, origY = cfg.y || 0;
+      el.setPointerCapture(e.pointerId);
+      const move = (ev) => {
+        cfg.x = origX + (ev.clientX - startX);
+        cfg.y = origY + (ev.clientY - startY);
+        applyBlockTransform(el, cfg);
+      };
+      const up = () => {
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+        layout[id] = cfg; saveLayout(layout);
+      };
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+    });
+  }
+}
+
+// ============================================
 // SEARCH FUNCTIONALITY
 // ============================================
 
@@ -1149,6 +1260,16 @@ function setupEventListeners() {
   if (menuAbout) {
     menuAbout.onclick = () => { closeMenu(); openAbout(); };
   }
+
+  // Layout editor
+  const menuEditLayout = document.getElementById('menu-edit-layout');
+  if (menuEditLayout) {
+    menuEditLayout.onclick = () => { closeMenu(); enterLayoutEdit(); };
+  }
+  const layoutDone = document.getElementById('layout-done');
+  if (layoutDone) layoutDone.onclick = exitLayoutEdit;
+  const layoutReset = document.getElementById('layout-reset');
+  if (layoutReset) layoutReset.onclick = resetLayout;
 
   // Email signup modal
   const signupForm = document.getElementById('signup-form');
