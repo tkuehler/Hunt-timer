@@ -1,490 +1,1101 @@
-// Texas Counties List
-// Based on TPWD county listing
-window.texasCounties = [
-  "Anderson",
-  "Andrews",
-  "Angelina",
-  "Aransas",
-  "Archer",
-  "Armstrong",
-  "Atascosa",
-  "Austin",
-  "Bailey",
-  "Bandera",
-  "Bastrop",
-  "Baylor",
-  "Bee",
-  "Bell",
-  "Bexar",
-  "Blanco",
-  "Borden",
-  "Bosque",
-  "Bowie",
-  "Brazoria",
-  "Brazos",
-  "Brewster",
-  "Briscoe",
-  "Brooks",
-  "Brown",
-  "Burleson",
-  "Burnet",
-  "Caldwell",
-  "Calhoun",
-  "Callahan",
-  "Cameron",
-  "Camp",
-  "Carson",
-  "Cass",
-  "Castro",
-  "Chambers",
-  "Cherokee",
-  "Childress",
-  "Clay",
-  "Cochran",
-  "Coke",
-  "Coleman",
-  "Collin",
-  "Collingsworth",
-  "Colorado",
-  "Comal",
-  "Comanche",
-  "Concho",
-  "Cooke",
-  "Coryell",
-  "Cottle",
-  "Crane",
-  "Crockett",
-  "Crosby",
-  "Culberson",
-  "Dallam",
-  "Dallas",
-  "Dawson",
-  "Deaf Smith",
-  "Delta",
-  "Denton",
-  "DeWitt",
-  "Dickens",
-  "Dimmit",
-  "Donley",
-  "Duval",
-  "Eastland",
-  "Ector",
-  "Edwards",
-  "Ellis",
-  "El Paso",
-  "Erath",
-  "Falls",
-  "Fannin",
-  "Fayette",
-  "Fisher",
-  "Floyd",
-  "Foard",
-  "Fort Bend",
-  "Franklin",
-  "Freestone",
-  "Frio",
-  "Gaines",
-  "Galveston",
-  "Garza",
-  "Gillespie",
-  "Glasscock",
-  "Goliad",
-  "Gonzales",
-  "Gray",
-  "Grayson",
-  "Gregg",
-  "Grimes",
-  "Guadalupe",
-  "Hale",
-  "Hall",
-  "Hamilton",
-  "Hansford",
-  "Hardeman",
-  "Hardin",
-  "Harris",
-  "Harrison",
-  "Hartley",
-  "Haskell",
-  "Hays",
-  "Hemphill",
-  "Henderson",
-  "Hidalgo",
-  "Hill",
-  "Hockley",
-  "Hood",
-  "Hopkins",
-  "Houston",
-  "Howard",
-  "Hudspeth",
-  "Hunt",
-  "Hutchinson",
-  "Irion",
-  "Jack",
-  "Jackson",
-  "Jasper",
-  "Jeff Davis",
-  "Jefferson",
-  "Jim Hogg",
-  "Jim Wells",
-  "Johnson",
-  "Jones",
-  "Karnes",
-  "Kaufman",
-  "Kendall",
-  "Kenedy",
-  "Kent",
-  "Kerr",
-  "Kimble",
-  "King",
-  "Kinney",
-  "Kleberg",
-  "Knox",
-  "Lamar",
-  "Lamb",
-  "Lampasas",
-  "La Salle",
-  "Lavaca",
-  "Lee",
-  "Leon",
-  "Liberty",
-  "Limestone",
-  "Lipscomb",
-  "Live Oak",
-  "Llano",
-  "Loving",
-  "Lubbock",
-  "Lynn",
-  "Madison",
-  "Marion",
-  "Martin",
-  "Mason",
-  "Matagorda",
-  "Maverick",
-  "McCulloch",
-  "McLennan",
-  "McMullen",
-  "Medina",
-  "Menard",
-  "Midland",
-  "Milam",
-  "Mills",
-  "Mitchell",
-  "Montague",
-  "Montgomery",
-  "Moore",
-  "Morris",
-  "Motley",
-  "Nacogdoches",
-  "Navarro",
-  "Newton",
-  "Nolan",
-  "Nueces",
-  "Ochiltree",
-  "Oldham",
-  "Orange",
-  "Palo Pinto",
-  "Panola",
-  "Parker",
-  "Parmer",
-  "Pecos",
-  "Polk",
-  "Potter",
-  "Presidio",
-  "Rains",
-  "Randall",
-  "Reagan",
-  "Real",
-  "Red River",
-  "Reeves",
-  "Refugio",
-  "Roberts",
-  "Robertson",
-  "Rockwall",
-  "Runnels",
-  "Rusk",
-  "Sabine",
-  "San Augustine",
-  "San Jacinto",
-  "San Patricio",
-  "San Saba",
-  "Schleicher",
-  "Scurry",
-  "Shackelford",
-  "Shelby",
-  "Sherman",
-  "Smith",
-  "Somervell",
-  "Starr",
-  "Stephens",
-  "Sterling",
-  "Stonewall",
-  "Sutton",
-  "Swisher",
-  "Tarrant",
-  "Taylor",
-  "Terrell",
-  "Terry",
-  "Throckmorton",
-  "Titus",
-  "Tom Green",
-  "Travis",
-  "Trinity",
-  "Tyler",
-  "Upshur",
-  "Upton",
-  "Uvalde",
-  "Val Verde",
-  "Van Zandt",
-  "Victoria",
-  "Walker",
-  "Waller",
-  "Ward",
-  "Washington",
-  "Webb",
-  "Wharton",
-  "Wheeler",
-  "Wichita",
-  "Wilbarger",
-  "Willacy",
-  "Williamson",
-  "Wilson",
-  "Winkler",
-  "Wise",
-  "Wood",
-  "Yoakum",
-  "Young",
-  "Zapata",
-  "Zavala",
-]
+// Texas counties and county-specific hunting season data.
+// Season dates reflect the official TPWD 2026-2027 Outdoor Annual (approximate for
+// zone splits); always verify against tpwd.texas.gov. Not affiliated with TPWD.
 
-// Texas County-Specific Hunting Seasons
-// This is a comprehensive database based on TPWD regulations
-// Note: Seasons vary by county and weapon type. These represent general archery/general season dates
+window.texasCounties = ["Anderson","Andrews","Angelina","Aransas","Archer","Armstrong","Atascosa","Austin","Bailey","Bandera","Bastrop","Baylor","Bee","Bell","Bexar","Blanco","Borden","Bosque","Bowie","Brazoria","Brazos","Brewster","Briscoe","Brooks","Brown","Burleson","Burnet","Caldwell","Calhoun","Callahan","Cameron","Camp","Carson","Cass","Castro","Chambers","Cherokee","Childress","Clay","Cochran","Coke","Coleman","Collin","Collingsworth","Colorado","Comal","Comanche","Concho","Cooke","Coryell","Cottle","Crane","Crockett","Crosby","Culberson","Dallam","Dallas","Dawson","Deaf Smith","Delta","Denton","DeWitt","Dickens","Dimmit","Donley","Duval","Eastland","Ector","Edwards","Ellis","El Paso","Erath","Falls","Fannin","Fayette","Fisher","Floyd","Foard","Fort Bend","Franklin","Freestone","Frio","Gaines","Galveston","Garza","Gillespie","Glasscock","Goliad","Gonzales","Gray","Grayson","Gregg","Grimes","Guadalupe","Hale","Hall","Hamilton","Hansford","Hardeman","Hardin","Harris","Harrison","Hartley","Haskell","Hays","Hemphill","Henderson","Hidalgo","Hill","Hockley","Hood","Hopkins","Houston","Howard","Hudspeth","Hunt","Hutchinson","Irion","Jack","Jackson","Jasper","Jeff Davis","Jefferson","Jim Hogg","Jim Wells","Johnson","Jones","Karnes","Kaufman","Kendall","Kenedy","Kent","Kerr","Kimble","King","Kinney","Kleberg","Knox","Lamar","Lamb","Lampasas","La Salle","Lavaca","Lee","Leon","Liberty","Limestone","Lipscomb","Live Oak","Llano","Loving","Lubbock","Lynn","Madison","Marion","Martin","Mason","Matagorda","Maverick","McCulloch","McLennan","McMullen","Medina","Menard","Midland","Milam","Mills","Mitchell","Montague","Montgomery","Moore","Morris","Motley","Nacogdoches","Navarro","Newton","Nolan","Nueces","Ochiltree","Oldham","Orange","Palo Pinto","Panola","Parker","Parmer","Pecos","Polk","Potter","Presidio","Rains","Randall","Reagan","Real","Red River","Reeves","Refugio","Roberts","Robertson","Rockwall","Runnels","Rusk","Sabine","San Augustine","San Jacinto","San Patricio","San Saba","Schleicher","Scurry","Shackelford","Shelby","Sherman","Smith","Somervell","Starr","Stephens","Sterling","Stonewall","Sutton","Swisher","Tarrant","Taylor","Terrell","Terry","Throckmorton","Titus","Tom Green","Travis","Trinity","Tyler","Upshur","Upton","Uvalde","Val Verde","Van Zandt","Victoria","Walker","Waller","Ward","Washington","Webb","Wharton","Wheeler","Wichita","Wilbarger","Willacy","Williamson","Wilson","Winkler","Wise","Wood","Yoakum","Young","Zapata","Zavala"];
+
 window.texasCountySeasons = {
-  // Sample counties with detailed season information
-  // In production, this would include all 254 Texas counties
-  Travis: {
-    // Official TPWD 2026-2027 dates (Travis = South Dove Zone, South Turkey Zone)
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 7, endMonth: 1, endDay: 17 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 30, endMonth: 1, endDay: 17 },
-    mule_deer: { name: "Mule Deer", month: 11, day: 25 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 7, endMonth: 2, endDay: 28 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 20, endMonth: 5, endDay: 2 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1, endMonth: 1, endDay: 21 },
-    quail: { name: "Quail", month: 11, day: 1, endMonth: 2, endDay: 28 },
-    duck: { name: "Duck (South Zone)", month: 11, day: 7, endMonth: 1, endDay: 31 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Travis": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "mule_deer": {
+      "name": "Mule Deer",
+      "month": 11,
+      "day": 25
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 20,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "duck": {
+      "name": "Duck (South Zone)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Bexar: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    duck: { name: "Duck (South Zone)", month: 11, day: 11 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Bexar": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "duck": {
+      "name": "Duck (South Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Harris: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    duck: { name: "Duck (South Zone)", month: 11, day: 11 },
-    goose: { name: "Goose (East Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Harris": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "duck": {
+      "name": "Duck (South Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "goose": {
+      "name": "Goose (East Zone)",
+      "month": 11,
+      "day": 11
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Dallas: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (North Zone)", month: 9, day: 1 },
-    duck: { name: "Duck (East Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Dallas": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (North Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 7
+    },
+    "duck": {
+      "name": "Duck (East Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
   "El Paso": {
-    mule_deer: { name: "Mule Deer", month: 11, day: 25 },
-    whitetail_deer: { name: "Whitetail Deer", month: 11, day: 25 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    pronghorn: { name: "Pronghorn Antelope", month: 9, day: 2 },
-    dove: { name: "Dove (Special White-Winged)", month: 9, day: 1 },
-    quail: { name: "Scaled Quail", month: 11, day: 4 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
+    "mule_deer": {
+      "name": "Mule Deer",
+      "month": 11,
+      "day": 25
+    },
+    "whitetail_deer": {
+      "name": "Whitetail Deer",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "pronghorn": {
+      "name": "Pronghorn Antelope",
+      "month": 9,
+      "day": 2
+    },
+    "dove": {
+      "name": "Dove (Special White-Winged)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Scaled Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    }
   },
-
-  Tarrant: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (North Zone)", month: 9, day: 1 },
-    duck: { name: "Duck (East Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Tarrant": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (North Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 7
+    },
+    "duck": {
+      "name": "Duck (East Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Collin: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (North Zone)", month: 9, day: 1 },
-    duck: { name: "Duck (East Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Collin": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (North Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 7
+    },
+    "duck": {
+      "name": "Duck (East Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Denton: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (North Zone)", month: 9, day: 1 },
-    duck: { name: "Duck (East Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Denton": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (North Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 7
+    },
+    "duck": {
+      "name": "Duck (East Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Comal: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    duck: { name: "Duck (South Zone)", month: 11, day: 11 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Comal": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "duck": {
+      "name": "Duck (South Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Guadalupe: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Guadalupe": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Hays: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    duck: { name: "Duck (South Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Hays": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "duck": {
+      "name": "Duck (South Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Kendall: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Kendall": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Williamson: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    duck: { name: "Duck (East Zone)", month: 11, day: 11 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Williamson": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "duck": {
+      "name": "Duck (East Zone)",
+      "month": 11,
+      "day": 11,
+      "endMonth": 1,
+      "endDay": 31
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Blanco: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Blanco": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Burnet: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 18 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-    hog: { name: "Feral Hog (Year-Round)", month: 1, day: 1 },
+  "Burnet": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 18,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    },
+    "hog": {
+      "name": "Feral Hog (Year-Round)",
+      "month": 1,
+      "day": 1
+    }
   },
-
-  Llano: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Llano": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Gillespie: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
+  "Gillespie": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
   },
-
-  Kerr: {
-    whitetail_deer: { name: "Whitetail Deer (General)", month: 11, day: 4 },
-    whitetail_deer_youth: { name: "Youth-Only Deer", month: 10, day: 28 },
-    turkey_fall: { name: "Fall Turkey", month: 11, day: 4 },
-    turkey_spring: { name: "Spring Turkey", month: 3, day: 25 },
-    dove: { name: "Dove (South Zone)", month: 9, day: 1 },
-    quail: { name: "Quail", month: 10, day: 28 },
-    javelina: { name: "Javelina", month: 9, day: 1 },
-    squirrel: { name: "Squirrel", month: 5, day: 1 },
-    rabbit: { name: "Rabbit", month: 10, day: 1 },
-  },
-
-  // Add more counties as needed
-  // Default fallback for counties not yet in database
-}
+  "Kerr": {
+    "whitetail_deer": {
+      "name": "Whitetail Deer (General)",
+      "month": 11,
+      "day": 7,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "whitetail_deer_youth": {
+      "name": "Youth-Only Deer",
+      "month": 10,
+      "day": 30,
+      "endMonth": 1,
+      "endDay": 17
+    },
+    "turkey_fall": {
+      "name": "Fall Turkey",
+      "month": 11,
+      "day": 7,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "turkey_spring": {
+      "name": "Spring Turkey",
+      "month": 3,
+      "day": 25,
+      "endMonth": 5,
+      "endDay": 2
+    },
+    "dove": {
+      "name": "Dove (South Zone)",
+      "month": 9,
+      "day": 1,
+      "endMonth": 1,
+      "endDay": 21
+    },
+    "quail": {
+      "name": "Quail",
+      "month": 11,
+      "day": 1,
+      "endMonth": 2,
+      "endDay": 28
+    },
+    "javelina": {
+      "name": "Javelina",
+      "month": 9,
+      "day": 1
+    },
+    "squirrel": {
+      "name": "Squirrel",
+      "month": 5,
+      "day": 1
+    },
+    "rabbit": {
+      "name": "Rabbit",
+      "month": 10,
+      "day": 1
+    }
+  }
+};

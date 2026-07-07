@@ -163,7 +163,6 @@ const huntingQuotes = [
   { text: "When the hunter is in the woods, the rest of the world disappears.", author: "Anonymous" },
   { text: "Hunting is not a matter of life and death. It is far more important than that.", author: "Robert Ruark" },
   { text: "The wilderness holds answers to questions man has not yet learned to ask.", author: "Nancy Wynne Newhall" },
-  { text: "Good things come to those who bait.", author: "Anonymous" },
   { text: "We don't stop hunting because we grow old — we grow old because we stop hunting.", author: "Anonymous" },
   { text: "May your blind be warm, your aim be true, and your freezer full.", author: "Anonymous" },
   // Theodore Roosevelt
@@ -991,11 +990,29 @@ function applyBlockTransform(el, cfg) {
 
 function applySavedLayout() {
   const layout = getLayout();
+  const editing = document.body.classList.contains('layout-edit');
   document.querySelectorAll('.movable').forEach(el => {
     const id = el.dataset.layout;
-    if (layout[id]) applyBlockTransform(el, layout[id]);
-    else el.style.transform = '';
+    const cfg = layout[id];
+    if (cfg) applyBlockTransform(el, cfg); else el.style.transform = '';
+    if (!editing) {
+      // Hidden sections are removed from view when not editing
+      el.style.display = (cfg && cfg.hidden) ? 'none' : '';
+      el.classList.remove('block-hidden');
+    }
   });
+}
+
+function updateBlockHiddenVisual(el) {
+  const id = el.dataset.layout;
+  const layout = getLayout();
+  const hidden = !!(layout[id] && layout[id].hidden);
+  el.classList.toggle('block-hidden', hidden);
+  const rm = el.querySelector('.block-remove');
+  if (rm) {
+    rm.textContent = hidden ? '+' : '×';
+    rm.setAttribute('aria-label', hidden ? 'Restore section' : 'Remove section');
+  }
 }
 
 function enterLayoutEdit() {
@@ -1003,7 +1020,11 @@ function enterLayoutEdit() {
   document.body.classList.add('layout-edit');
   const toolbar = document.getElementById('layout-toolbar');
   if (toolbar) toolbar.classList.add('active');
-  document.querySelectorAll('.movable').forEach(setupBlockEditing);
+  document.querySelectorAll('.movable').forEach(el => {
+    el.style.display = ''; // reveal hidden sections so they can be restored
+    setupBlockEditing(el);
+    updateBlockHiddenVisual(el);
+  });
 }
 
 function exitLayoutEdit() {
@@ -1011,16 +1032,41 @@ function exitLayoutEdit() {
   document.body.classList.remove('layout-edit');
   const toolbar = document.getElementById('layout-toolbar');
   if (toolbar) toolbar.classList.remove('active');
-  document.querySelectorAll('.resize-handle').forEach(h => h.remove());
+  document.querySelectorAll('.resize-handle, .block-remove').forEach(h => h.remove());
+  document.querySelectorAll('.movable').forEach(el => el.classList.remove('block-hidden'));
+  applySavedLayout(); // now actually hide the removed sections
 }
 
 function resetLayout() {
   localStorage.removeItem('huntLayout');
-  document.querySelectorAll('.movable').forEach(el => { el.style.transform = ''; });
+  document.querySelectorAll('.movable').forEach(el => {
+    el.style.transform = '';
+    el.style.display = '';
+    el.classList.remove('block-hidden');
+    updateBlockHiddenVisual(el);
+  });
 }
 
 function setupBlockEditing(el) {
   const id = el.dataset.layout;
+
+  // Remove / restore button (top-left corner)
+  if (!el.querySelector('.block-remove')) {
+    const rm = document.createElement('button');
+    rm.className = 'block-remove';
+    rm.type = 'button';
+    el.appendChild(rm);
+    rm.addEventListener('pointerdown', (e) => e.stopPropagation()); // don't start a drag
+    rm.addEventListener('click', (e) => {
+      e.stopPropagation(); e.preventDefault();
+      const layout = getLayout();
+      const cfg = layout[id] || { x: 0, y: 0, scale: 1 };
+      cfg.hidden = !cfg.hidden;
+      layout[id] = cfg;
+      saveLayout(layout);
+      updateBlockHiddenVisual(el);
+    });
+  }
 
   // Resize handle (added while editing, removed on exit)
   if (!el.querySelector('.resize-handle')) {
