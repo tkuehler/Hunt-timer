@@ -1,6 +1,6 @@
 # Privacy Policy for Hunt Clock
 
-**Last Updated: June 19, 2026**
+**Last Updated: July 6, 2026**
 
 ## Overview
 
@@ -13,6 +13,8 @@ The Extension stores the following data locally on your device using Chrome's st
 - Your selected state and county preferences
 - Custom hunting seasons you create
 - Your display name (optional)
+- Your to-do list items
+- Dashboard layout customizations
 - User interface preferences
 
 This data is stored **only on your device** and is never transmitted to external servers.
@@ -49,11 +51,11 @@ We do **NOT**:
 - Track your browsing activity
 - Collect analytics or usage data
 
-The only external service used is OpenStreetMap's Nominatim API for reverse geocoding when you opt to auto-detect your location.
+External services are limited to: OpenStreetMap's Nominatim API (only when you auto-detect your location), Google Fonts (to load the display font), and Google Forms/Sheets (only if you opt in to Season Alerts). We do not use advertising or analytics services.
 
 ## Data Storage
 
-All user data is stored locally on your device using Chrome's built-in storage APIs. No data is stored on external servers.
+All user data is stored locally on your device, with one exception: if you opt in to Season Alerts, the email address you submit is stored in a private Google Sheet we control. We do not store any other data on external servers.
 
 ## Your Rights
 
