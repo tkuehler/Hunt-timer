@@ -879,7 +879,7 @@ body {
   border-radius: 12px;
   padding: 10px 14px;
 }
-.todo-check { width: 18px; height: 18px; accent-color: #7dff8a; cursor: pointer; flex: 0 0 auto; }
+.todo-check { width: 18px; height: 18px; accent-color: #b4b2a9; cursor: pointer; flex: 0 0 auto; }
 .todo-text { flex: 1; font-size: 0.95rem; font-weight: 300; }
 .todo-item.done .todo-text { text-decoration: line-through; opacity: 0.55; }
 .todo-remove {
